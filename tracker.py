@@ -112,14 +112,16 @@ def Tweet(a, havescreenshot):
 		hashtags.append(" #FlyingFast")
 	if a.speed >= 700:
 		hashtags.append(" #SpeedDemon")
+	if a.squawk == 7700:
+		hashtags.append(" #Squawk7700 #Emergency")
 
         #Airline Information
-        if 'DAL' in a.flight:
-                hashtags.append(" #DeltaAirlines")
-        if 'EDV' in a.flight:
-                hashtags.append(" #EndeavorAir")
-        if 'SKW' in a.flight:
-                hashtags.append(" #SkyWest")
+	if 'DAL' in a.flight:
+		hashtags.append(" #DeltaAirlines")
+	if 'EDV' in a.flight:
+		hashtags.append(" #EndeavorAir")
+	if 'SKW' in a.flight:
+		hashtags.append(" #SkyWest")
 
 	# add the conditional hashtags as long as there is room in 140 chars
 	for hash in hashtags: 
