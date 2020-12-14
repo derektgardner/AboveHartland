@@ -8,6 +8,11 @@ config.ini
 #ignore nohup.out
 nohup.out
 
+#ignore .idea
+.idea
+
+#ignore run_tracker. No need to update git with changes to install location.
+run_tracker.sh
 
 #ignore tweet.png the image it saves on each tweet:
 tweet.png
