@@ -106,14 +106,14 @@ def Tweet(a, havescreenshot):
 	else:
 		tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
 	# Check if aircraft has been seen. Append tweet if it has.
-	seencount = []
+	seencount = 'placeholder'
 	if a.hex in aircraftCount:
-		seencount.append(" I've seen this aircraft " + str(aircraftCount[a.hex]) + " times before!")
+		seencount = " I've seen this aircraft " + str(aircraftCount[a.hex]) + " times before!"
 		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
 		pickle_out = open("seenAircraft.pickle", "wb")
 		pickle.dump(aircraftCount, pickle_out)
 	else:
-		seencount.append(" This is the first time I've seen this aircraft!")
+		seencount = " This is the first time I've seen this aircraft!"
 		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
 		pickle_out = open("seenAircraft.pickle", "wb")
 		pickle.dump(aircraftCount, pickle_out)
@@ -147,7 +147,7 @@ def Tweet(a, havescreenshot):
 		hashtags.append(" #SkyWest")
 
 	# add seen count for aircraft
-	tweet += seencount
+	tweet += str(seencount)
 
 	# add the conditional hashtags as long as there is room in 140 chars
 	for hash in hashtags: 
