@@ -3,7 +3,7 @@
 [AboveHartland](https://twitter.com/abovehartland) is an ADS-B Twitter Bot running on a Raspberry Pi 3b.  It tracks airplanes and then tweets whenever an airplane flies overhead. It is a fork of [OverPutney](https://github.com/shbisson/overputney), which is a fork of the original [AboveTustin](https://github.com/kevinabrandon/abovetustin) bot. Simon Bisson modified it to work on a Piaware with Flightaware's fork of dump1090 and addied support for [Josh Douch's free ICAO lookup APIs](https://api.joshdouch.me/). He also modified it to use chromedriver for browser interactions rather than the deprecated PhantomJS webdriver. I have only made small modifications to the code to work for my needs.
 
  * Uses [tar1090](https://github.com/wiedehopf/tar1090) for ADSB message decoding, airplane tracking, and webserving.
- * Built on the [dump1090-fa](https://github.com/flightaware/dump1090) receiver software.
+ * Built on the [dump1090-fa](https://github.com/flightaware/dump1090) receiver software, but will also work with [piaware](https://flightaware.com/adsb/piaware/) installations.
  * Works with Chromium chromedriver webdriver on Raspberry Pi.
  * It tweets an image of a map with the airplane's track and the decoded aircraft data displayed by tar1090.
  * It displays the flight name if available, or the reported icao code.
