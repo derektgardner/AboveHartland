@@ -122,7 +122,8 @@ def Tweet(a, havescreenshot):
 		seencount = " This is the first time I've seen this aircraft!"
 		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
 		pickle_out = open("seenAircraft.pickle", "wb")
-		pickle.dump(aircraftCount, pickle_out)	#conditional hashtags:
+		pickle.dump(aircraftCount, pickle_out)	
+	#conditional hashtags:
 	hashtags = []
 	if a.time.hour < 6 or a.time.hour >= 22 or (a.time.weekday() == 7 and a.time.hour < 8):
 		hashtags.append(" #AfterHours")
