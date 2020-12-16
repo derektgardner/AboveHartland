@@ -109,7 +109,7 @@ def Tweet(a, havescreenshot):
 	seencount = 'placeholder'
 	if a.hex in aircraftCount:
 		if aircraftCount[a.hex] == 1:
-			seencount = "I've seen this aircraft 1 time before!"
+			seencount = " I've seen this aircraft 1 time before!"
 			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
 			pickle_out = open("seenAircraft.pickle", "wb")
 			pickle.dump(aircraftCount, pickle_out)
