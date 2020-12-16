@@ -105,6 +105,7 @@ def Tweet(a, havescreenshot):
 			tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
 	else:
 		tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
+<<<<<<< HEAD
 
 	# Check if aircraft has been seen. Append tweet if it has.
 	seencount = 'placeholder'
@@ -119,6 +120,15 @@ def Tweet(a, havescreenshot):
 			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
 			pickle_out = open("seenAircraft.pickle", "wb")
 			pickle.dump(aircraftCount, pickle_out)
+=======
+	# Check if aircraft has been seen. Append tweet if it has.
+	seencount = 'placeholder'
+	if a.hex in aircraftCount:
+		seencount = " I've seen this aircraft " + str(aircraftCount[a.hex]) + " times before!"
+		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
+		pickle_out = open("seenAircraft.pickle", "wb")
+		pickle.dump(aircraftCount, pickle_out)
+>>>>>>> 0d0c3eff5d2e0654c96f39721586259e7fc8e302
 	else:
 		seencount = " This is the first time I've seen this aircraft!"
 		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
