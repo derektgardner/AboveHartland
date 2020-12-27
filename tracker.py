@@ -7,6 +7,8 @@
 import sys
 import traceback
 import time
+import os
+import pickle
 from time import sleep
 from twitter import *
 from configparser import ConfigParser
@@ -18,6 +20,16 @@ import flightdata
 import geomath
 import screenshot
 import aircraftdata
+
+if os.path.isfile('seenAircraft.pickle'):
+	print('seenAircraft dictionary is present')
+	pickle_in = open("seenAircraft.pickle", "rb")
+	aircraftCount = pickle.load(pickle_in)
+else:
+	print('nope')
+	aircraftCount = {}
+	pickle_out = open("seenAircraft.pickle", "wb")
+	pickle.dump(aircraftCount, pickle_out)
 
 # Read the configuration file for this application.
 parser = ConfigParser()
@@ -40,11 +52,10 @@ twitter_consumer_secret = parser.get('twitter', 'consumer_secret')
 twitter_access_token = parser.get('twitter', 'access_token')
 twitter_access_token_secret = parser.get('twitter', 'access_token_secret')
 
-
 # Login to twitter.
 twit = Twitter(auth=(OAuth(twitter_access_token, twitter_access_token_secret, twitter_consumer_key, twitter_consumer_secret)))
 
-# Given an aircraft 'a' tweet.  
+# Given an aircraft 'a' tweet.
 # If we have a screenshot, upload it to twitter with the tweet.
 def Tweet(a, havescreenshot):
 	# compile the template arguments
@@ -94,6 +105,24 @@ def Tweet(a, havescreenshot):
 			tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
 	else:
 		tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
+	# Check if aircraft has been seen. Append tweet if it has.
+	seencount = 'placeholder'
+	if a.hex in aircraftCount:
+		if aircraftCount[a.hex] == 1:
+			seencount = " I've seen this aircraft 1 time before!"
+			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
+			pickle_out = open("seenAircraft.pickle", "wb")
+			pickle.dump(aircraftCount, pickle_out)
+		else:
+			seencount = " I've seen this aircraft " + str(aircraftCount[a.hex]) + " times before!"
+			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
+			pickle_out = open("seenAircraft.pickle", "wb")
+			pickle.dump(aircraftCount, pickle_out)
+	else:
+		seencount = " This is the first time I've seen this aircraft!"
+		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
+		pickle_out = open("seenAircraft.pickle", "wb")
+		pickle.dump(aircraftCount, pickle_out)	
 	#conditional hashtags:
 	hashtags = []
 	if a.time.hour < 6 or a.time.hour >= 22 or (a.time.weekday() == 7 and a.time.hour < 8):
@@ -115,7 +144,7 @@ def Tweet(a, havescreenshot):
 	if a.squawk == 7700:
 		hashtags.append(" #Squawk7700 #Emergency")
 
-        #Airline Information
+	#Airline Information
 	if 'DAL' in a.flight:
 		hashtags.append(" #DeltaAirlines")
 	if 'EDV' in a.flight:
@@ -123,10 +152,13 @@ def Tweet(a, havescreenshot):
 	if 'SKW' in a.flight:
 		hashtags.append(" #SkyWest")
 
+	# add seen count for aircraft
+	tweet += str(seencount)
+
 	# add the conditional hashtags as long as there is room in 140 chars
 	for hash in hashtags: 
 		if len(tweet) + len(hash) <= 280:
-			tweet += hash
+			tweet += " " + hash
 
 	# add the default hashtags as long as there is room
 	for hash in parser.get('tweet', 'default_hashtags').split(' '):
