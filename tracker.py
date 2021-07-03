@@ -9,6 +9,7 @@ import traceback
 import time
 import os
 import pickle
+import sqlite3
 from time import sleep
 from twitter import *
 from configparser import ConfigParser
@@ -21,15 +22,15 @@ import geomath
 import screenshot
 import aircraftdata
 
-if os.path.isfile('seenAircraft.pickle'):
-	print('seenAircraft dictionary is present')
-	pickle_in = open("seenAircraft.pickle", "rb")
-	aircraftCount = pickle.load(pickle_in)
+if os.path.isfile('aircraftCount.db'):
+    print('aircraftCount database is present')
+    conn = sqlite3.connect('aircraftCount.db')
+    c = conn.cursor()
 else:
-	print('nope')
-	aircraftCount = {}
-	pickle_out = open("seenAircraft.pickle", "wb")
-	pickle.dump(aircraftCount, pickle_out)
+    print('nope')
+    conn = sqlite3.connect('aircraftCount.db')
+    c = conn.cursor()
+    c.execute("CREATE TABLE aircraft ( hex text, count integer)")
 
 # Read the configuration file for this application.
 parser = ConfigParser()
@@ -107,22 +108,23 @@ def Tweet(a, havescreenshot):
 		tweet = Template(parser.get('tweet', 'tweet_template')).substitute(templateArgs)
 	# Check if aircraft has been seen. Append tweet if it has.
 	seencount = 'placeholder'
-	if a.hex in aircraftCount:
-		if aircraftCount[a.hex] == 1:
+	c.execute("SELECT count FROM aircraft WHERE hex=:hex LIMIT 1", {'hex': a.hex})
+	count = c.fetchone()
+	if count is not None:
+		count = str(count)
+		count = count[1:-2]
+		if count == 1:
 			seencount = " I've seen this aircraft 1 time before!"
-			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
-			pickle_out = open("seenAircraft.pickle", "wb")
-			pickle.dump(aircraftCount, pickle_out)
+			c.execute("UPDATE aircraft SET count = count + 1 WHERE hex=:hex", {'hex': a.hex})
+			conn.commit()
 		else:
-			seencount = " I've seen this aircraft " + str(aircraftCount[a.hex]) + " times before!"
-			aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
-			pickle_out = open("seenAircraft.pickle", "wb")
-			pickle.dump(aircraftCount, pickle_out)
+			seencount = " I've seen this aircraft " + str(count) + " times before!"
+			c.execute("UPDATE aircraft SET count = count + 1 WHERE hex=:hex", {'hex': a.hex})
+			conn.commit()
 	else:
+		c.execute("INSERT INTO aircraft VALUES (?, ?)", (a.hex, 1))
+		conn.commit()
 		seencount = " This is the first time I've seen this aircraft!"
-		aircraftCount[a.hex] = aircraftCount.get(a.hex, 0) + 1
-		pickle_out = open("seenAircraft.pickle", "wb")
-		pickle.dump(aircraftCount, pickle_out)	
 	#conditional hashtags:
 	hashtags = []
 	if a.time.hour < 6 or a.time.hour >= 22 or (a.time.weekday() == 7 and a.time.hour < 8):

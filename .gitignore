@@ -30,3 +30,6 @@ __pycache__/
 
 #ignore pickle files
 .pickle
+
+#ignore database files
+*.db
