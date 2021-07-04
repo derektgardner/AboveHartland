@@ -8,7 +8,6 @@ import sys
 import traceback
 import time
 import os
-import pickle
 import sqlite3
 from time import sleep
 from twitter import *
