@@ -10,7 +10,7 @@
  * It displays altitude, ground speed and heading information of the airplane at it's closest point to the bot.
  * Gives different hashtags depending on airline operator, altitude, speed and time of day.
  * Adds aircraft registration, type, and owner using [Josh Douch's ICAO hex lookup APIs](https://api.joshdouch.me/). (This functionality is limited at best. The API results are inconsistent. It is disabled on my personal installation.)
-## Modifications I've Made
+### Modifications I've Made
  * Updated to work with [piaware](https://flightaware.com/adsb/piaware/) in addition to dump1090.
  * Tracks the number of time an aircraft has been seen and includes that in the tweets.
 
